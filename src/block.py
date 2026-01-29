@@ -1,22 +1,6 @@
 def mine_block(miner_address: str, mempool, utxo_manager, num_txs=5):
-    """
-    mine_block() simulates the mining of a block in our local Bitcoin-like simulator.
-
-    USE OF THIS FUNCTION:
-    - It confirms transactions from the mempool (unconfirmed pool)
-    - It permanently updates the UTXO set (blockchain state)
-    - It gives the miner the collected transaction fees as reward
-    - It removes confirmed transactions from the mempool
-
-    Steps followed (as mentioned in assignment):
-    1) Select top transactions from mempool
-    2) Update UTXO set (remove spent inputs, add new outputs)
-    3) Add miner fee as a special UTXO
-    4) Remove mined transactions from mempool
-    """
-
-    # Select top N transactions from mempool.
-    # These are usually chosen based on highest fee first.
+    
+    # Select top N transactions from mempool
     selected_txs = mempool.get_top_transactions(num_txs)
 
     # If there are no transactions, mining cannot be done.
@@ -35,19 +19,7 @@ def mine_block(miner_address: str, mempool, utxo_manager, num_txs=5):
     mined_tx_ids = []
 
     def calculate_fee(tx):
-        """
-        calculate_fee() calculates transaction fee using:
-        fee = Sum(inputs) - Sum(outputs)
-
-        WHY THIS IS NEEDED:
-        - Miners earn fees for including transactions
-        - Mempool sorting is usually by highest fee
-        - The simulation also gives miner the total fees after mining
-
-        Returns:
-        - Fee (float) if inputs exist
-        - -1.0 if any input UTXO does not exist (invalid tx)
-        """
+        
         input_sum = 0.0
         output_sum = 0.0
 
@@ -84,7 +56,7 @@ def mine_block(miner_address: str, mempool, utxo_manager, num_txs=5):
         if fee < 0:
             continue
 
-        # Remove (spend) all the input UTXOs because they are now used.
+        # Remove all the input UTXOs because they are now used.
         # This prevents double-spending permanently (confirmed state).
         for inp in tx["inputs"]:
             utxo_manager.remove_utxo(inp["prev_tx"], inp["index"])
@@ -105,7 +77,6 @@ def mine_block(miner_address: str, mempool, utxo_manager, num_txs=5):
         # Store the mined transaction ID so it can be removed from mempool later.
         mined_tx_ids.append(tx_id)
 
-    # Miner reward in this simulator = total transaction fees from the mined transactions.
     # We store this as a special UTXO owned by the miner.
     if total_fees > 0:
         utxo_manager.add_utxo(
@@ -115,11 +86,11 @@ def mine_block(miner_address: str, mempool, utxo_manager, num_txs=5):
             owner=miner_address
         )
 
-    # Remove all mined transactions from mempool since they are now confirmed in a block.
+    # Remove all mined transactions from mempool as they are now confirmed in a block.
     for tx_id in mined_tx_ids:
         mempool.remove_transaction(tx_id)
 
-    # Return summary of mining results (useful for printing output in main.py)
+    # Summary of mining results
     return {
         "success": True,
         "message": "Block mined successfully!",
