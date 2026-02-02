@@ -1,0 +1,60 @@
+=== Bitcoin Transaction Simulator ===
+
+Initial UTXOs (Genesis Block):
+Alice: 50.0 BTC
+Bob: 30.0 BTC
+Charlie: 20.0 BTC
+David: 10.0 BTC
+Eve: 5.0 BTC
+
+Main Menu:
+1. Create new transaction
+2. View UTXO set
+3. View mempool
+4. Mine block
+5. Run test scenarios
+6. Exit
+
+Enter choice: 1
+Enter sender: Alice
+Available balance: 50.0
+Enter recipient: Bob
+Enter amount: 10.0
+Creating transaction...
+Transaction valid! Fee: 0.001 BTC
+Transaction ID: tx_1738515147_4821
+Transaction added to mempool.
+Mempool now has 1 transaction.
+
+Enter choice: 3
+--- Current Mempool ---
+[ID: tx_1738515147_4821] Alice -> Bob: 10.0 BTC | Fee: 0.001 BTC
+
+Enter choice: 5
+Select test scenario: 4
+Running Test 4: Mempool Double-Spend...
+Attempting to spend UTXO (genesis, 0) again for Alice -> Charlie (5.0 BTC)
+Result: REJECTED
+Error: UTXO already spent in mempool.
+
+Enter choice: 4
+Enter miner name: Miner_Alpha
+Mining block...
+Selected 1 transactions from mempool.
+Total fees: 0.001 BTC
+Miner Miner_Alpha receives 0.001 BTC
+Block mined successfully!
+Removed 1 transactions from mempool.
+
+Enter choice: 2
+--- Current UTXO Set ---
+Owner: Bob      | Amount: 10.0   | Ref: (tx_1738515147_4821, 0)
+Owner: Alice    | Amount: 39.999 | Ref: (tx_1738515147_4821, 1)
+Owner: Bob      | Amount: 30.0   | Ref: (genesis, 1)
+Owner: Charlie  | Amount: 20.0   | Ref: (genesis, 2)
+Owner: David    | Amount: 10.0   | Ref: (genesis, 3)
+Owner: Eve      | Amount: 5.0    | Ref: (genesis, 4)
+Owner: Miner_Alpha | Amount: 0.001 | Ref: (block_reward, 0)
+
+Enter choice: 6
+Exiting...
