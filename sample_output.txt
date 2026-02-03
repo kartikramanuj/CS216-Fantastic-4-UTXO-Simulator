@@ -1,13 +1,16 @@
+PS C:\Users\krtkr\Downloads\assignment 1_blockchain> python -m src.main                     
+--- Initializing Genesis UTXOs ---
+
+--- Genesis UTXO Set ---
+UTXO ('genesis', 0) → Owner: Alice, Amount: 50.0
+UTXO ('genesis', 1) → Owner: Bob, Amount: 30.0
+UTXO ('genesis', 2) → Owner: Charlie, Amount: 20.0
+UTXO ('genesis', 3) → Owner: David, Amount: 10.0
+UTXO ('genesis', 4) → Owner: Eve, Amount: 5.0
+Genesis block initialized.
+
+
 === Bitcoin Transaction Simulator ===
-
-Initial UTXOs (Genesis Block):
-Alice: 50.0 BTC
-Bob: 30.0 BTC
-Charlie: 20.0 BTC
-David: 10.0 BTC
-Eve: 5.0 BTC
-
-Main Menu:
 1. Create new transaction
 2. View UTXO set
 3. View mempool
@@ -16,45 +19,74 @@ Main Menu:
 6. Exit
 
 Enter choice: 1
-Enter sender: Alice
+
+--- Create New Transaction ---
+Enter sender: Alice 
 Available balance: 50.0
-Enter recipient: Bob
+Enter recipient: bob
 Enter amount: 10.0
-Creating transaction...
-Transaction valid! Fee: 0.001 BTC
-Transaction ID: tx_1738515147_4821
-Transaction added to mempool.
-Mempool now has 1 transaction.
+Transaction Valid & Added! Fee: 0.00100
+Transaction ID: tx_Alice_1770139286_6765
 
 Enter choice: 3
---- Current Mempool ---
-[ID: tx_1738515147_4821] Alice -> Bob: 10.0 BTC | Fee: 0.001 BTC
-
-Enter choice: 5
-Select test scenario: 4
-Running Test 4: Mempool Double-Spend...
-Attempting to spend UTXO (genesis, 0) again for Alice -> Charlie (5.0 BTC)
-Result: REJECTED
-Error: UTXO already spent in mempool.
+Mempool contains 1 transactions.
 
 Enter choice: 4
-Enter miner name: Miner_Alpha
-Mining block...
-Selected 1 transactions from mempool.
-Total fees: 0.001 BTC
-Miner Miner_Alpha receives 0.001 BTC
+Enter miner name: Kartik
 Block mined successfully!
-Removed 1 transactions from mempool.
+Miner Kartik earned 0.0009999999999976694 in fees.
+
+Enter choice: 5
+   SELECT TEST SCENARIO
+1. Double-Spend Attack (Section 10.1)
+2. Race Attack / First-Seen (Section 10.2)
+3. Fork Selection Rules (Section 10.4)
+4. Return to Main Menu
+
+Enter choice: 1
+
+Running Test 1: Double-Spending Prevention...
+TX1 : Alice -> Bob (10 BTC)    - VALID (Transaction added to mempool)
+TX2 : Alice -> Charlie (10 BTC) - REJECTED
+Error : Input ('tx_Alice_1770139286_6765', 1) is already pending in Mempool.
 
 Enter choice: 2
---- Current UTXO Set ---
-Owner: Bob      | Amount: 10.0   | Ref: (tx_1738515147_4821, 0)
-Owner: Alice    | Amount: 39.999 | Ref: (tx_1738515147_4821, 1)
-Owner: Bob      | Amount: 30.0   | Ref: (genesis, 1)
-Owner: Charlie  | Amount: 20.0   | Ref: (genesis, 2)
-Owner: David    | Amount: 10.0   | Ref: (genesis, 3)
-Owner: Eve      | Amount: 5.0    | Ref: (genesis, 4)
-Owner: Miner_Alpha | Amount: 0.001 | Ref: (block_reward, 0)
 
-Enter choice: 6
-Exiting...
+Running Test 2: Race Attack (First-Seen Rule)...
+TX1 (Low Fee)  : Broadcast 1st - ENTERED MEMPOOL
+TX2 (High Fee) : Broadcast 2nd - REJECTED (Rule: First-Seen)
+Error : Input ('tx_Alice_1770139286_6765', 1) is already pending in Mempool.
+
+Enter choice: 3
+
+Running Test 3: Fork Selection...
+Use custom chains? (yes/no): yes
+
+ Building Chain A
+No. of blocks total in Chain A: 6
+Enter details for the LATEST block (Block #6):
+  -Miner Name: Parl
+  - Transaction Count: 44
+  - Total Fees: 0.01
+
+ Building Chain B
+No. of blocks total in Chain B: 5
+Enter details for the LATEST block (Block #5):
+  -Miner Name: Sakshya
+  - Transaction Count: 50
+  - Total Fees: 0.1
+Comparing: Chain A (6 blocks) vs Chain B (5 blocks)
+Result: Winner: Chain A (Longest Chain)
+
+Enter choice: 4 (returned to main menue)
+
+Enter choice: 2
+
+--- Current UTXO Set ---
+('genesis', 1): {'amount': 30.0, 'owner': 'Bob'}
+('genesis', 2): {'amount': 20.0, 'owner': 'Charlie'}
+('genesis', 3): {'amount': 10.0, 'owner': 'David'}
+('genesis', 4): {'amount': 5.0, 'owner': 'Eve'}
+('tx_Alice_1770139286_6765', 0): {'amount': 10.0, 'owner': 'bob'}
+('tx_Alice_1770139286_6765', 1): {'amount': 39.999, 'owner': 'Alice'}
+('miner_reward', 1): {'amount': 0.0009999999999976694, 'owner': 'Kartik'}
